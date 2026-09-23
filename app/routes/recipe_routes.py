@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request
 from app.functions.auth_functions import token_required
 from app.functions.preference_functions import NUTRITION_GOALS
 from app.functions.recipe_functions import fetch_recipe_detail, find_recipes_by_ingredients
+from app.functions.smart_recc_function import generate_smart_recommendations
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -16,8 +17,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env', override=True)
 
 API_KEY = os.getenv("API_KEY")
-print(f"🔑 Recipe Routes API Key: {API_KEY}")
-
 @recipe_routes.route("/recipedetail/<int:recipe_id>", methods=['GET'])
 @token_required
 def recipe_detail_get(current_user, recipe_id):
@@ -283,3 +282,9 @@ def recipes_by_ingredients(current_user):
         
     except Exception as e:
         return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+@recipe_routes.route('/smart-recommendations', methods=['GET'])
+@token_required
+def smart_recommendations(current_user):
+    """Return the five recipes most aligned with the user's saved recipes."""
+    return generate_smart_recommendations(current_user)
