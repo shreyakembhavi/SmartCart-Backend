@@ -86,7 +86,7 @@ def generate_smart_recommendations(current_user):
 
     email = current_user["email"]
     preferences = user_preferences_collection.find_one({"email": email}) or {}
-    saved_recipes = list(saved_recipes_collection.find({"email": email}))
+    saved_recipes = list(saved_recipes_collection.find({"user_email": email}))
 
     saved_embeddings = []
     for recipe in saved_recipes:
